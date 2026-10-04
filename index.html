@@ -2,26 +2,118 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mening Birinchi Dasturim</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 30px; }
-        input { padding: 10px; font-size: 16px; border-radius: 5px; border: none; margin-top: 10px; width: 250px; text-align: center; }
-        button { padding: 10px 20px; font-size: 16px; background-color: #00ff00; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        #output { font-size: 20px; margin-top: 20px; white-space: pre-line; line-height: 1.6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: linear-gradient(135deg, #0f172a, #1e1b4b); 
+            color: #f8fafc; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { 
+            background-color: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; 
+            width: 100%;
+            max-width: 500px; 
+            padding: 35px 25px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h2 { 
+            color: #38bdf8; 
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        p {
+            font-size: 16px;
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+        input { 
+            padding: 14px 20px; 
+            font-size: 16px; 
+            border-radius: 12px; 
+            border: 2px solid #334155; 
+            background-color: #0f172a;
+            color: #fff;
+            margin-top: 5px; 
+            width: 100%; 
+            text-align: center; 
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+        button { 
+            padding: 14px 20px; 
+            font-size: 16px; 
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #052e16;
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            width: 100%;
+            font-weight: bold; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #output { 
+            font-size: 18px; 
+            margin-top: 25px; 
+            white-space: pre-line; 
+            line-height: 1.8; 
+            text-align: left;
+            background-color: rgba(15, 23, 42, 0.6);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #38bdf8;
+        }
         .hidden { display: none; }
+        .success-text { color: #4ade80; font-weight: bold; }
+        .error-text { color: #f87171; font-weight: bold; }
+        .rocket-art {
+            font-family: monospace;
+            color: #f87171;
+            font-size: 14px;
+            line-height: 1.3;
+            text-align: center;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="game-box">
-            <h2 id="status-text" style="color: #00ffff;">Dastur yuklanmoqda... 🤔</h2>
+            <h2 id="status-text">Dastur yuklanmoqda... 🤔</h2>
             <div id="input-area">
+                <p id="question-text"></p>
                 <input type="text" id="user-input" placeholder="">
-                <br>
                 <button id="submit-btn" onclick="processStep()">Yuborish</button>
             </div>
-            <div id="output"></div>
+            <div id="output" class="hidden"></div>
         </div>
     </div>
 
@@ -38,12 +130,24 @@
         const submitBtn = document.getElementById("submit-btn");
         const output = document.getElementById("output");
         const inputArea = document.getElementById("input-area");
+        const questionText = document.getElementById("question-text");
 
         // Dastur boshlanishi
-        setTimeout(() => {
-            statusText.innerText = "1-bosqich: Tanishuv";
-            userInput.placeholder = "Ismingizni yozing...";
-        }, 1000);
+        statusText.innerText = "1-bosqich: Tanishuv";
+        questionText.innerText = "Keling, avval tanishib olamiz!";
+        userInput.placeholder = "Ismingizni yozing...";
+
+        // Enter tugmasi bosilganda ham yuborish ishlashi uchun
+        userInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                processStep();
+            }
+        });
+
+        function showOutput(text) {
+            output.classList.remove("hidden");
+            output.innerHTML += text + "\n";
+        }
 
         function processStep() {
             let val = userInput.value.trim();
@@ -51,14 +155,15 @@
 
             if (step === 1) {
                 userName = val;
-                output.innerHTML += `hush kebsan ${userName}\n`;
+                showOutput(`👋 hush kebsan ${userName}`);
                 userInput.value = "";
                 inputArea.classList.add("hidden");
                 
                 setTimeout(() => {
                     inputArea.classList.remove("hidden");
                     statusText.innerText = "2-bosqich: Yoshni hisoblash";
-                    userInput.placeholder = "qaysi yili tug'ilgansan masalan 2000:";
+                    questionText.innerText = "Tug'ilgan yilingizni kiriting:";
+                    userInput.placeholder = "Masalan: 2005";
                     step = 2;
                 }, 2000);
 
@@ -69,41 +174,45 @@
                     return;
                 }
                 let age = 2026 - birthYear;
-                output.innerHTML += `Sen ${age} yoshdasan.\n`;
+                showOutput(`📅 Sen ${age} yoshdasan.`);
                 userInput.value = "";
                 inputArea.classList.add("hidden");
 
                 setTimeout(() => {
                     inputArea.classList.remove("hidden");
                     statusText.innerText = "3-bosqich: Kalkulyator";
-                    userInput.placeholder = "hohlagan raqam yoz:";
+                    questionText.innerText = "Matematika chalindji! Birinchi sonni yozing:";
+                    userInput.placeholder = "Hohlagan raqam yoz...";
                     step = 3;
                 }, 2000);
 
             } else if (step === 3) {
                 firstNum = parseFloat(val);
+                if (isNaN(firstNum)) { firstNum = 0; }
                 userInput.value = "";
-                statusText.innerText = "3-bosqich: Kalkulyator (Davomi)";
-                userInput.placeholder = "yana boshqa raqam yoz:";
+                questionText.innerText = "Yana bitta boshqa raqam yozing:";
+                userInput.placeholder = "Ikkinchi raqam...";
                 step = 4;
 
             } else if (step === 4) {
                 secondNum = parseFloat(val);
+                if (isNaN(secondNum)) { secondNum = 0; }
                 let sum = firstNum + secondNum;
-                output.innerHTML += `jami qo'shilganda: ${sum}\n`;
+                showOutput(`🧮 jami qo'shilganda: ${sum}`);
                 userInput.value = "";
                 inputArea.classList.add("hidden");
 
                 setTimeout(() => {
                     inputArea.classList.remove("hidden");
                     statusText.innerText = "4-bosqich: Ob-havo";
-                    userInput.placeholder = "Hozir yashayotgan joyingda nechi gradus issiq?";
+                    questionText.innerText = "Hozir yashayotgan joyingda nechi gradus issiq?";
+                    userInput.placeholder = "Haroratni raqamda yozing...";
                     step = 5;
                 }, 2000);
 
             } else if (step === 5) {
                 if (isNaN(parseFloat(val))) {
-                    output.innerHTML += "<span style='color:red;'>faqat raqam yoz!</span>\n";
+                    alert("Iltimos, faqat raqam yozing!");
                     userInput.value = "";
                     return;
                 }
@@ -111,48 +220,49 @@
                 userInput.value = "";
                 
                 if (temperature < 25) {
-                    output.innerHTML += "koreadan sovuqroq ekan!\n";
+                    showOutput("🌡️ koreadan sovuqroq ekan!");
                 } else if (temperature >= 30) {
-                    output.innerHTML += "issiq ekan,qorayib ket.\n";
+                    showOutput("🌡️ issiq ekan, qorayib ket.");
                 } else {
-                    output.innerHTML += "unchalik issiqmas ekan kochaga chiqib yugurib kel!\n";
+                    showOutput("🌡️ unchalik issiqmas ekan kochaga chiqib yugurib kel!");
                 }
                 inputArea.classList.add("hidden");
 
                 setTimeout(() => {
                     inputArea.classList.remove("hidden");
                     statusText.innerText = "5-bosqich: Siyosat o'yini";
-                    userInput.placeholder = "O'zbekiston Respublikasi Prezidentining ism va familiyasini yoz:";
+                    questionText.innerText = "O'zbekiston Respublikasi Prezidentining ism va familiyasini yoz:";
+                    userInput.placeholder = "Prezident ismi...";
                     step = 6;
                 }, 2000);
 
             } else if (step === 6) {
                 if (val.toUpperCase() === "SHAVKAT MIRZIYOYEV") {
-                    output.innerHTML += "<span style='color:#00ff00;'>yaxshi! 🌟</span>\n";
+                    showOutput("<span class='success-text'>yaxshi! 🌟</span>");
                     userInput.value = "";
                     inputArea.classList.add("hidden");
                     
                     setTimeout(() => {
-                        output.innerHTML += "to'g'ri topganing uchun maxsus sovg'a tayyorlanmoqda...\n";
+                        showOutput("🎁 To'g'ri topganing uchun maxsus sovg'a tayyorlanmoqda...");
                         setTimeout(startRocket, 2000);
                     }, 2000);
                 } else {
-                    output.innerHTML += "<span style='color:red;'>Shuniyam bilmaysanmi? Qaytadan urinib ko'r! ❌</span>\n";
+                    showOutput("<span class='error-text'>Shuniyam bilmaysanmi? Qaytadan urinib ko'r! ❌</span>");
                     userInput.value = "";
                 }
             }
         }
 
         function startRocket() {
-            output.innerHTML += "\n🔥 MANA SENGA SOVG'A: RAKETA! 🔥\n";
+            showOutput("\n🔥 MANA SENGA SOVG'A: RAKETA! 🔥");
             let count = 5;
             let timer = setInterval(() => {
-                output.innerHTML += `hozir boshlanadi: ${count}...\n`;
+                showOutput(`⏱️ hozir boshlanadi: ${count}...`);
                 count--;
                 if (count < 0) {
                     clearInterval(timer);
                     output.innerHTML += `
-<span style="color:red;">🚀
+<div class="rocket-art">🚀
     /\\
    /  \\
 
@@ -165,13 +275,4 @@
    |  |
   /____\\
   vvvvvv
- 🔥🔥🔥🔥🔥</span>
-<span style="color:#00ff00; font-weight:bold; font-size:22px;"><br>barakalla! 🏆</span>
-yana nima qilsam ekan🤔\n`;
-                    statusText.innerText = "Dastur tugadi! ✅";
-                }
-            }, 1000);
-        }
-    </script>
-</body>
-</html>
+ 🔥🔥🔥🔥🔥</div>
