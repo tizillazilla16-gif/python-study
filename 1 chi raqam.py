@@ -20,7 +20,7 @@ time.sleep(2)
 print("jami qo'shilganda: " + str(sum))
 time.sleep(2)
 while True:
-    temp_input = input("Hozir yashayotgan joyingda nechi gradus issiq? ")
+    temp_input = input("necha gradus issiq? ")
     time.sleep(2)
     
     # Son kiritilganini tekshirish (matn kiritilsa xato beradi)
@@ -45,7 +45,7 @@ else:
 import time
 
 while True:
-    ism = input("O'zbekiston Respublikasi Prezidentining ism va familiyasini yoz: ")
+    ism = input("UZB prezidenti ism va familiyasini yoz: ")
     time.sleep(2)
     
     # .upper() yordamida kiritilgan matnni butunlay KATTA harflarga o'tkazib tekshiramiz
