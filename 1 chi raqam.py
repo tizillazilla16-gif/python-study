@@ -82,36 +82,3 @@ print(" 🔥🔥🔥🔥🔥")
 print("\nbarakalla! 🏆")
 print("yana nima qilsam ekan🤔")
 time.sleep(3)
-import turtle
-
-# Tezlikni sozlash (1-10 gacha, 3 o'rtacha tezlik)
-turtle.speed(0)
-# Orqa fon rangini qora qilish
-turtle.bgcolor('black')
-# Chiziq qalinligi
-turtle.pensize(3)
-
-# Yurakning tepasidagi aylanma qismini chizish uchun funksiya
-def func():
-    for i in range(200):
-        turtle.right(1)
-        turtle.forward(1)
-
-# Chiziq rangi 'red' (qizil), ichining bo'yog'i 'pink' (pushti)
-turtle.color('red', 'pink')
-turtle.begin_fill()
-
-# Yurakni chizishni boshlash
-turtle.left(140)
-turtle.forward(111.65)
-func()
-
-turtle.left(120)
-func()
-
-turtle.forward(111.65)
-turtle.end_fill()
-
-# Toshbaqa belgisini yashirish va oynani ushlab turish
-turtle.hideturtle()
-turtle.done()
