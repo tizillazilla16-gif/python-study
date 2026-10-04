@@ -2,68 +2,175 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Prezident O'yini</title>
+    <title>Mening Birinchi Dasturim</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
-        input { padding: 10px; font-size: 16px; border-radius: 5px; border: none; margin-top: 10px; }
-        button { padding: 10px 20px; font-size: 16px; background-color: #00ff00; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px; }
-        #output { font-size: 20px; margin-top: 20px; white-space: pre-line; }
-        canvas { margin-top: 20px; background-color: #000; display: block; margin-left: auto; margin-right: auto; }
+        body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 30px; }
+        input { padding: 10px; font-size: 16px; border-radius: 5px; border: none; margin-top: 10px; width: 250px; text-align: center; }
+        button { padding: 10px 20px; font-size: 16px; background-color: #00ff00; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        #output { font-size: 20px; margin-top: 20px; white-space: pre-line; line-height: 1.6; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div id="game">
-        <h2 style="color: #00ffff;">Savol yuklanmoqda... 🤔</h2>
-        <p id="question">O'zbekiston Respublikasi Prezidentining ism va familiyasini yozing:</p>
-        <input type="text" id="answer" placeholder="Ism va familiya...">
-        <button onclick="checkAnswer()">Yuborish</button>
-        <div id="output"></div>
+    <div class="container">
+        <div id="game-box">
+            <h2 id="status-text" style="color: #00ffff;">Dastur yuklanmoqda... 🤔</h2>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="">
+                <br>
+                <button id="submit-btn" onclick="processStep()">Yuborish</button>
+            </div>
+            <div id="output"></div>
+        </div>
     </div>
-    <canvas id="heartCanvas" width="400" height="400" style="display:none;"></canvas>
 
     <script>
-        function checkAnswer() {
-            let ans = document.getElementById("answer").value.trim().toUpperCase();
-            let out = document.getElementById("output");
-            if (ans === "SHAVKAT MIRZIYOYEV") {
-                out.innerHTML = "<span style='color:#00ff00;'>Barakalla! To'g'ri topdingiz! 🌟</span><br>Sizga maxsus sovg'a tayyorlanmoqda...";
-                document.getElementById("answer").style.display = "none";
-                document.querySelector("button").style.display = "none";
-                setTimeout(startRocket, 2000);
-            } else {
-                out.innerHTML = "<span style='color:#ff0000;'>Shuniyam bilmaysanmi? Qaytadan urinib ko'r! ❌</span>";
+        let step = 1;
+        let userName = "";
+        let birthYear = "";
+        let firstNum = 0;
+        let secondNum = 0;
+        let temperature = 0;
+        
+        const statusText = document.getElementById("status-text");
+        const userInput = document.getElementById("user-input");
+        const submitBtn = document.getElementById("submit-btn");
+        const output = document.getElementById("output");
+        const inputArea = document.getElementById("input-area");
+
+        // Dastur boshlanishi
+        setTimeout(() => {
+            statusText.innerText = "1-bosqich: Tanishuv";
+            userInput.placeholder = "Ismingizni yozing...";
+        }, 1000);
+
+        function processStep() {
+            let val = userInput.value.trim();
+            if (val === "" && step !== 6) return;
+
+            if (step === 1) {
+                userName = val;
+                output.innerHTML += `hush kebsan ${userName}\n`;
+                userInput.value = "";
+                inputArea.classList.add("hidden");
+                
+                setTimeout(() => {
+                    inputArea.classList.remove("hidden");
+                    statusText.innerText = "2-bosqich: Yoshni hisoblash";
+                    userInput.placeholder = "qaysi yili tug'ilgansan masalan 2000:";
+                    step = 2;
+                }, 2000);
+
+            } else if (step === 2) {
+                birthYear = parseInt(val);
+                if (isNaN(birthYear)) {
+                    alert("Iltimos, yilni raqamda kiriting!");
+                    return;
+                }
+                let age = 2026 - birthYear;
+                output.innerHTML += `Sen ${age} yoshdasan.\n`;
+                userInput.value = "";
+                inputArea.classList.add("hidden");
+
+                setTimeout(() => {
+                    inputArea.classList.remove("hidden");
+                    statusText.innerText = "3-bosqich: Kalkulyator";
+                    userInput.placeholder = "hohlagan raqam yoz:";
+                    step = 3;
+                }, 2000);
+
+            } else if (step === 3) {
+                firstNum = parseFloat(val);
+                userInput.value = "";
+                statusText.innerText = "3-bosqich: Kalkulyator (Davomi)";
+                userInput.placeholder = "yana boshqa raqam yoz:";
+                step = 4;
+
+            } else if (step === 4) {
+                secondNum = parseFloat(val);
+                let sum = firstNum + secondNum;
+                output.innerHTML += `jami qo'shilganda: ${sum}\n`;
+                userInput.value = "";
+                inputArea.classList.add("hidden");
+
+                setTimeout(() => {
+                    inputArea.classList.remove("hidden");
+                    statusText.innerText = "4-bosqich: Ob-havo";
+                    userInput.placeholder = "Hozir yashayotgan joyingda nechi gradus issiq?";
+                    step = 5;
+                }, 2000);
+
+            } else if (step === 5) {
+                if (isNaN(parseFloat(val))) {
+                    output.innerHTML += "<span style='color:red;'>faqat raqam yoz!</span>\n";
+                    userInput.value = "";
+                    return;
+                }
+                temperature = parseFloat(val);
+                userInput.value = "";
+                
+                if (temperature < 25) {
+                    output.innerHTML += "koreadan sovuqroq ekan!\n";
+                } else if (temperature >= 30) {
+                    output.innerHTML += "issiq ekan,qorayib ket.\n";
+                } else {
+                    output.innerHTML += "unchalik issiqmas ekan kochaga chiqib yugurib kel!\n";
+                }
+                inputArea.classList.add("hidden");
+
+                setTimeout(() => {
+                    inputArea.classList.remove("hidden");
+                    statusText.innerText = "5-bosqich: Siyosat o'yini";
+                    userInput.placeholder = "O'zbekiston Respublikasi Prezidentining ism va familiyasini yoz:";
+                    step = 6;
+                }, 2000);
+
+            } else if (step === 6) {
+                if (val.toUpperCase() === "SHAVKAT MIRZIYOYEV") {
+                    output.innerHTML += "<span style='color:#00ff00;'>yaxshi! 🌟</span>\n";
+                    userInput.value = "";
+                    inputArea.classList.add("hidden");
+                    
+                    setTimeout(() => {
+                        output.innerHTML += "to'g'ri topganing uchun maxsus sovg'a tayyorlanmoqda...\n";
+                        setTimeout(startRocket, 2000);
+                    }, 2000);
+                } else {
+                    output.innerHTML += "<span style='color:red;'>Shuniyam bilmaysanmi? Qaytadan urinib ko'r! ❌</span>\n";
+                    userInput.value = "";
+                }
             }
         }
+
         function startRocket() {
-            let out = document.getElementById("output");
+            output.innerHTML += "\n🔥 MANA SENGA SOVG'A: RAKETA! 🔥\n";
             let count = 5;
             let timer = setInterval(() => {
-                out.innerHTML = `<span style='color:#00ffff;'>🔥 MANA SIZGA ZO'R SOVG'A: KOSMIK RAKETA UCHISHI! 🔥</span><br><span style='color:#ffff00;'>Oynani tayyorlash: ${count}...</span>`;
+                output.innerHTML += `hozir boshlanadi: ${count}...\n`;
                 count--;
                 if (count < 0) {
                     clearInterval(timer);
-                    out.innerHTML = "<span style='color:#ff0000;'>🚀 POYGA BOSHLANDI!!!<br>Tabriklayman! Loyihani daxshat bajardingiz! 🏆</span>";
-                    setTimeout(drawHeart, 2000);
+                    output.innerHTML += `
+<span style="color:red;">🚀
+    /\\
+   /  \\
+
+  |    |
+  |    |
+ /|    |\\
+/_|_  _|_\\
+
+   |  |
+   |  |
+  /____\\
+  vvvvvv
+ 🔥🔥🔥🔥🔥</span>
+<span style="color:#00ff00; font-weight:bold; font-size:22px;"><br>barakalla! 🏆</span>
+yana nima qilsam ekan🤔\n`;
+                    statusText.innerText = "Dastur tugadi! ✅";
                 }
             }, 1000);
-        }
-        function drawHeart() {
-            document.getElementById("game").style.display = "none";
-            let canvas = document.getElementById("heartCanvas");
-            canvas.style.display = "block";
-            let ctx = canvas.getContext("2d");
-            ctx.translate(200, 200);
-            ctx.strokeStyle = "red";
-            ctx.fillStyle = "pink";
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            for (let t = 0; t < Math.PI * 2; t += 0.01) {
-                let x = 16 * Math.pow(Math.sin(t), 3) * 10;
-                let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) * 10;
-                ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.fill();
         }
     </script>
 </body>
